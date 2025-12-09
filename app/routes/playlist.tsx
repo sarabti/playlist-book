@@ -9,5 +9,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Playlist() {
-  return <h1>Playlist</h1>;
+  return (
+    <div className="p-3">
+      <h1 className="text-heading">پلی لیست</h1>
+    </div>
+  );
 }

@@ -1,1 +1,1 @@
-export const appName = process.env.APP_NAME ?? "Bayacloud";
+export const appName = import.meta.env.VITE_APP_NAME ?? "Bayacloud";

@@ -9,5 +9,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Screen() {
-  return <h1>Screen</h1>;
+  return (
+    <div className="p-3">
+      <h1 className="text-heading">اسکرین</h1>
+    </div>
+  );
 }

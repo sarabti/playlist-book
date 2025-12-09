@@ -9,5 +9,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Dashboard() {
-  return <h1>Dashboard</h1>;
+  return (
+    <div className="p-3">
+      <h1 className="text-heading">داشبورد</h1>
+    </div>
+  );
 }
