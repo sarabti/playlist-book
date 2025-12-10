@@ -1,15 +1,26 @@
 "use client";
 
 import {
-  Tabs,
   TabsList,
   TabsTrigger,
   TabsContent,
-} from "../../components/ui/tabs";
-import { useState } from "react";
+  Tabs,
+} from "../../components/ui/Tabs";
+import { useEffect, useState } from "react";
 import { appName } from "../../constants";
 import type { Route } from "./+types/playlist";
 import { PlaylistList } from "components/shared/Playlists";
+import { Button } from "components/ui/Button";
+import { Upload } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "components/ui/Dialog";
+import UploadMediaModal from "components/shared/UploadMediaModal";
+import { getAllFiles } from "~/lib/db";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -18,14 +29,23 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const mockPlaylists = [
-  { name: "پلی لیست ۱", isPublished: true },
-  { name: "پلی لیست ۲", isPublished: true },
-  { name: "پلی لیست ۳", isPublished: false },
-];
-
 export default function Playlist() {
   const [tab, setTab] = useState("all");
+  const [files, setFiles] = useState<any[]>([]);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const refreshFiles = () => {
+    setReloadKey((k) => k + 1);
+  };
+
+  useEffect(() => {
+    loadFiles();
+  }, []);
+
+  async function loadFiles() {
+    const stored = await getAllFiles();
+    setFiles(stored);
+  }
 
   const tabs = [
     { value: "all", label: "همه" },
@@ -35,13 +55,29 @@ export default function Playlist() {
 
   const filtered =
     tab === "all"
-      ? mockPlaylists
+      ? files
       : tab === "published"
-        ? mockPlaylists.filter((p) => p.isPublished)
-        : mockPlaylists.filter((p) => !p.isPublished);
+        ? files.filter((p) => p.isPublished)
+        : files.filter((p) => !p.isPublished);
 
   return (
     <div className="flex flex-col gap-3">
+      <Dialog onOpenChange={(open) => !open && refreshFiles()}>
+        <DialogTrigger asChild>
+          <Button className="flex items-center gap-2 bg-primary-800 text-white rounded-xl px-5 py-2 w-max mr-auto">
+            <Upload className="w-5 h-5" />
+            آپلود جدید
+          </Button>
+        </DialogTrigger>
+
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-right">آپلود فایل</DialogTitle>
+          </DialogHeader>
+
+          <UploadMediaModal />
+        </DialogContent>
+      </Dialog>
       <Tabs defaultValue="all" onValueChange={setTab} dir="rtl">
         <TabsList className="flex bg-base-200 space-x-1.5">
           {tabs.map((tab) => (
