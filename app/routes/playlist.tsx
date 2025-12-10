@@ -10,7 +10,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Playlist() {
   return (
-    <div className="p-3">
+    <div>
       <h1 className="text-heading">پلی لیست</h1>
     </div>
   );
