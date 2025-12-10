@@ -14,7 +14,9 @@ import PageNav from "./PageNav";
 export default function Header() {
   return (
     <header className="w-full h-16 bg-white border-b border-border flex items-center justify-between px-5">
-      <div className="hidden md:block"><PageNav /></div>
+      <div className="hidden md:block">
+        <PageNav />
+      </div>
       <div className="md:hidden">
         <Sheet>
           <SheetTrigger>
@@ -40,9 +42,18 @@ export default function Header() {
       <div className="hidden md:block w-6"></div>
 
       <div className="flex items-center gap-3">
-        <Search className="md:hidden w-6 h-6 text-gray-700" />
-        <Settings className="hidden md:block w-6 h-6 text-gray-700" />
-        <User className="hidden md:block w-6 h-6 text-gray-700" />
+        <Search
+          className="md:hidden w-6 h-6 text-gray-700"
+          strokeWidth={"1.5px"}
+        />
+        <Settings
+          className="hidden md:block w-6 h-6 text-gray-700"
+          strokeWidth={"1.5px"}
+        />
+        <User
+          className="hidden md:block w-6 h-6 text-gray-700"
+          strokeWidth={"1.5px"}
+        />
       </div>
     </header>
   );
