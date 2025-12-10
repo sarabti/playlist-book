@@ -12,8 +12,11 @@
   --color-base-700: #6B6B6B;
   --color-base-900: #1A1A1A;
 
-  --color-primary-200: #E8F1F4;
   --color-primary-100: #F9FBFB;
+  --color-primary-200: #E8F1F4;
+  --color-primary-300: #AEE1EA;
+  --color-primary-500: #74D1E0;
+  --color-primary-700: #3AC2D6;
   --color-primary-800: #01B3C8;
   --color-primary-900: #019AAE;
 }
