@@ -50,11 +50,14 @@ export default function Sidebar({ mobile = false }: SidebarProps) {
           <NavLink
             key={label}
             to={pathName}
-            className={clsx(
-              "flex items-center w-full rounded-xl",
-              "hover:bg-white transition-all",
-              "text-right py-3 px-2 text-(--color-text-secondary)"
-            )}
+            className={({ isActive }) =>
+              clsx(
+                "flex items-center w-full rounded-xl",
+                "hover:bg-white transition-all",
+                "text-right my-1 py-2 px-2 text-(--color-text-secondary)",
+                isActive ? "bg-white" : ""
+              )
+            }
           >
             <Icon className="w-5 h-5 ml-2" strokeWidth={1} />
             <span className="font-normal text-base">{label}</span>
@@ -62,7 +65,6 @@ export default function Sidebar({ mobile = false }: SidebarProps) {
         ))}
       </nav>
 
-      {/* Version text */}
       <div className="mt-auto text-xs text-gray-500 text-center pb-4">
         V 1.0.1 <br />
         Last version

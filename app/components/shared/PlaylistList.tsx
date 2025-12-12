@@ -75,7 +75,7 @@ export function PlaylistList({
       {items.map((file) => (
         <Card
           key={file.id}
-          className="w-full rounded-xl py-3 px-4 flex flex-row items-center justify-between shadow-none border-0"
+          className="w-full rounded-xl py-3 px-4 flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-none border-0"
         >
           <div className="flex flex-row space-x-4">
             <div className="rounded-lg bg-gray-200">
@@ -92,7 +92,7 @@ export function PlaylistList({
           </div>
 
           <TooltipProvider>
-            <div className="flex items-center gap-4 text-gray-700">
+            <div className="self-end sm:self-center flex items-center gap-4 text-gray-700">
               {getIconButtons(file.isPublished).map(
                 ({ icon: Icon, label, onClick }, index) => (
                   <Tooltip key={index}>

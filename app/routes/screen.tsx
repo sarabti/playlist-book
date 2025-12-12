@@ -1,5 +1,5 @@
 import type { Route } from "./+types/screen";
-import { appName } from "../../constants";
+import { appName } from "../constants";
 
 export function meta({}: Route.MetaArgs) {
   return [

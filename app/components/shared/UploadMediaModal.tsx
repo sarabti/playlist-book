@@ -1,11 +1,17 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { saveFile } from "../../lib/db";
-import { Upload, FolderUp, AlertCircle } from "lucide-react";
+import { Upload, FolderUp, AlertCircle, Loader2 } from "lucide-react";
+import { Progress } from "~/components/ui/progress";
+import { toast } from "sonner";
 
-export default function DragDropUpload() {
+interface DragDropUploadProps {
+  saveFile: (file: File) => void;
+}
+
+const DragDropUpload: React.FC<DragDropUploadProps> = ({ saveFile }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const validateFiles = (files: FileList | null) => {
@@ -37,11 +43,13 @@ export default function DragDropUpload() {
 
     if (!files) return;
 
+    setLoading(true);
     for (const file of files) {
       await saveFile(file);
     }
+    setLoading(false);
 
-    alert("فایل‌ها با موفقیت ذخیره شدند!");
+    toast.success("بارگذاری با موفقیت انجام شد");
   };
 
   const onDrop = useCallback(async (e: React.DragEvent) => {
@@ -52,40 +60,49 @@ export default function DragDropUpload() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div
-        onDragOver={(e) => {
-          e.preventDefault();
-          setIsDragging(true);
-        }}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={onDrop}
-        className={`border-2 border-dashed rounded-xl p-8 text-center transition
-          ${isDragging ? "border-primary bg-primary/10" : "border-gray-300"}
-        `}
-      >
-        <Upload className="w-10 h-10 mx-auto mb-3 text-gray-600" />
-
-        <p className="text-lg font-medium">فایل صوتی را اینجا رها کنید</p>
-
-        <p className="text-sm text-gray-500 mt-2">یا از دکمه زیر آپلود کنید</p>
-
-        <label
-          htmlFor="file-upload"
-          className="mt-4 inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg cursor-pointer"
+      {loading ? (
+        <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl border-primary bg-primary/10">
+          <Loader2 className="w-10 h-10 animate-spin text-primary mb-3" />
+          <p className="text-lg font-medium">در حال بارگذاری فایل‌ها...</p>
+          <Progress value={50} className="w-full mt-4" />
+        </div>
+      ) : (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragging(true);
+          }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={onDrop}
+          className={`border-2 border-dashed rounded-xl p-8 text-center transition
+            ${isDragging ? "border-primary bg-primary/10" : "border-gray-300"}
+          `}
         >
-          <FolderUp className="w-5 h-5" />
-          انتخاب فایل
-        </label>
+          <Upload className="w-10 h-10 mx-auto mb-3 text-gray-600" />
 
-        <input
-          id="file-upload"
-          type="file"
-          accept="audio/*"
-          multiple
-          onChange={(e) => handleFiles(e.target.files)}
-          className="hidden"
-        />
-      </div>
+          <p className="text-lg font-medium">فایل صوتی را اینجا رها کنید</p>
+          <p className="text-sm text-gray-500 mt-2">
+            یا از دکمه زیر آپلود کنید
+          </p>
+
+          <label
+            htmlFor="file-upload"
+            className="mt-4 inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg cursor-pointer"
+          >
+            <FolderUp className="w-5 h-5" />
+            انتخاب فایل
+          </label>
+
+          <input
+            id="file-upload"
+            type="file"
+            accept="audio/*"
+            multiple
+            onChange={(e) => handleFiles(e.target.files)}
+            className="hidden"
+          />
+        </div>
+      )}
 
       {error && (
         <div className="flex items-center gap-2 text-red-600 bg-red-100 border border-red-300 p-3 rounded-lg text-sm">
@@ -95,4 +112,6 @@ export default function DragDropUpload() {
       )}
     </div>
   );
-}
+};
+
+export default DragDropUpload;

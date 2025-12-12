@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import {
   getAllFiles,
+  saveFile as dbSaveFile,
   toggleFavorite as dbToggleFavorite,
   togglePublish as dbTogglePublish,
   duplicateFile as dbDuplicateFile,
@@ -22,6 +23,7 @@ export type FilesStore = {
   mutating: boolean;
 
   loadFiles: () => Promise<void>;
+  saveFile: (file: File) => Promise<void>;
   toggleFavorite: (id: number) => Promise<void>;
   togglePublish: (id: number) => Promise<void>;
   duplicate: (id: number) => Promise<void>;
@@ -37,6 +39,15 @@ export const useFilesStore = create<FilesStore>((set, get) => ({
     set({ loading: true });
     const stored: FileItem[] = await getAllFiles();
     set({ files: stored, loading: false });
+  },
+
+  saveFile: async (file: File) => {
+    set({ mutating: true });
+
+    await dbSaveFile(file);
+    await get().loadFiles();
+
+    set({ mutating: false });
   },
 
   toggleFavorite: async (id: number) => {

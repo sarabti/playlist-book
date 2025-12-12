@@ -1,4 +1,4 @@
-import { appName } from "../../constants";
+import { appName } from "../constants";
 import type { Route } from "./+types/dashboard";
 
 export function meta({}: Route.MetaArgs) {
