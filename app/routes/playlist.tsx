@@ -16,6 +16,7 @@ import {
 } from "~/components/ui/Dialog";
 import UploadMediaModal from "~/components/shared/UploadMediaModal";
 import { useFilesStore } from "~/useFileStore";
+import { toast } from "sonner";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -33,6 +34,7 @@ export default function Playlist() {
     files,
     loadFiles,
     toggleFavorite,
+    togglePublish,
     duplicate,
     delete: deleteFileAction,
   } = useFilesStore();
@@ -63,10 +65,37 @@ export default function Playlist() {
     });
   };
 
-  const handleFav = (id: number) => startTransition(() => toggleFavorite(id));
-  const handleDuplicate = (id: number) => startTransition(() => duplicate(id));
+  const handleFav = (id: number) =>
+    startTransition(async () => {
+      const file = files.find((f) => f.id === id);
+      const toastMsg = file?.isFavorite
+        ? "فایل از نشان‌شده‌ها حذف شد"
+        : "فایل به نشان‌شده‌ها اضافه شد";
+      await toggleFavorite(id);
+      toast.success(toastMsg);
+    });
+
+  const handlePublish = (id: number) =>
+    startTransition(async () => {
+      const file = files.find((f) => f.id === id);
+      const toastMsg = file?.isPublished
+        ? "فایل به پیش‌نویس منتقل شد"
+        : "فایل منتشر شد";
+      await togglePublish(id);
+      toast.success(toastMsg);
+    });
+
+  const handleDuplicate = (id: number) =>
+    startTransition(async () => {
+      await duplicate(id);
+      toast.success("فایل کپی شد");
+    });
+
   const handleDelete = (id: number) =>
-    startTransition(() => deleteFileAction(id));
+    startTransition(async () => {
+      await deleteFileAction(id);
+      toast.success("فایل حذف شد");
+    });
 
   const showLoader = loading || mutating || isPending;
 
@@ -117,6 +146,7 @@ export default function Playlist() {
                 <PlaylistList
                   items={filtered}
                   favAction={handleFav}
+                  publishAction={handlePublish}
                   duplicateAction={handleDuplicate}
                   deleteAction={handleDelete}
                 />

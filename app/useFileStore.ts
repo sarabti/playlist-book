@@ -12,7 +12,7 @@ import {
 export type FileItem = {
   id: number;
   name: string;
-  isFavourite: boolean;
+  isFavorite: boolean;
   isPublished: boolean;
 };
 
@@ -44,7 +44,7 @@ export const useFilesStore = create<FilesStore>((set, get) => ({
 
     set({
       files: get().files.map((f) =>
-        f.id === id ? { ...f, isFavourite: !f.isFavourite } : f
+        f.id === id ? { ...f, isFavorite: !f.isFavorite } : f
       ),
     });
 
