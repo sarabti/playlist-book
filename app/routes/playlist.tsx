@@ -1,17 +1,12 @@
 "use client";
 
-import {
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-  Tabs,
-} from "../components/ui/Tabs";
-import { useEffect, useState } from "react";
+import { TabsList, TabsTrigger, TabsContent, Tabs } from "~/components/ui/Tabs";
+import { useEffect, useState, useTransition } from "react";
 import { appName } from "../../constants";
 import type { Route } from "./+types/playlist";
-import { PlaylistList } from "~/components/shared/Playlists";
+import { PlaylistList } from "~/components/shared/PlaylistList";
 import { Button } from "~/components/ui/Button";
-import { Upload } from "lucide-react";
+import { Upload, Loader } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +15,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/Dialog";
 import UploadMediaModal from "~/components/shared/UploadMediaModal";
-import { getAllFiles } from "~/lib/db";
+import { useFilesStore } from "~/useFileStore";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -31,21 +26,22 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Playlist() {
   const [tab, setTab] = useState("all");
-  const [files, setFiles] = useState<any[]>([]);
-  const [reloadKey, setReloadKey] = useState(0);
+  const [isPending, startTransition] = useTransition();
+  const [fadeKey, setFadeKey] = useState(0);
 
-  const refreshFiles = () => {
-    setReloadKey((k) => k + 1);
-  };
+  const {
+    files,
+    loadFiles,
+    toggleFavorite,
+    duplicate,
+    delete: deleteFileAction,
+  } = useFilesStore();
+  const loading = useFilesStore((state) => state.loading);
+  const mutating = useFilesStore((state) => state.mutating);
 
   useEffect(() => {
     loadFiles();
-  }, [reloadKey]);
-
-  async function loadFiles() {
-    const stored = await getAllFiles();
-    setFiles(stored);
-  }
+  }, []);
 
   const tabs = [
     { value: "all", label: "همه" },
@@ -60,11 +56,25 @@ export default function Playlist() {
         ? files.filter((p) => p.isPublished)
         : files.filter((p) => !p.isPublished);
 
+  const handleTabChange = (value: string) => {
+    startTransition(() => {
+      setFadeKey((k) => k + 1);
+      setTab(value);
+    });
+  };
+
+  const handleFav = (id: number) => startTransition(() => toggleFavorite(id));
+  const handleDuplicate = (id: number) => startTransition(() => duplicate(id));
+  const handleDelete = (id: number) =>
+    startTransition(() => deleteFileAction(id));
+
+  const showLoader = loading || mutating || isPending;
+
   return (
-    <div className="flex flex-col gap-3">
-      <Dialog onOpenChange={(open) => !open && refreshFiles()}>
+    <div className="flex flex-col gap-3 relative">
+      <Dialog onOpenChange={(open) => !open && loadFiles()}>
         <DialogTrigger asChild>
-          <Button className="flex items-center gap-2 bg-primary-800 text-white rounded-xl px-5 py-2 w-max mr-auto">
+          <Button className="flex items-center gap-2 bg-primary-800 hover:bg-primary-900 text-white rounded-xl px-5 py-2 w-max mr-auto">
             <Upload className="w-5 h-5" />
             آپلود جدید
           </Button>
@@ -78,13 +88,14 @@ export default function Playlist() {
           <UploadMediaModal />
         </DialogContent>
       </Dialog>
-      <Tabs defaultValue="all" onValueChange={setTab} dir="rtl">
+
+      <Tabs defaultValue="all" onValueChange={handleTabChange} dir="rtl">
         <TabsList className="flex bg-base-200 space-x-1.5">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="border-primary-300 data-[state=active]:bg-primary-800 data-[state=active]:border-primary-800 data-[state=active]:text-primary-foreground data-[state=active]:shadow-none px-4 text-sm"
+              className="border-gray-300 hover:bg-gray-200 data-[state=active]:bg-primary-800 data-[state=active]:border-primary-800 data-[state=active]:text-primary-foreground data-[state=active]:shadow-none px-4 text-sm"
             >
               {tab.label}
             </TabsTrigger>
@@ -92,8 +103,25 @@ export default function Playlist() {
         </TabsList>
 
         {tabs.map((tab) => (
-          <TabsContent value={tab.value} key={tab.value}>
-            <PlaylistList items={filtered} />
+          <TabsContent value={tab.value} key={tab.value} className="relative">
+            <div
+              key={fadeKey}
+              className="transition-opacity duration-300 ease-in-out opacity-0 animate-fadeIn"
+            >
+              {showLoader ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-2">
+                  <Loader className="animate-spin w-8 h-8 text-primary-800" />
+                  <span className="text-primary-800">در حال بارگزاری...</span>
+                </div>
+              ) : (
+                <PlaylistList
+                  items={filtered}
+                  favAction={handleFav}
+                  duplicateAction={handleDuplicate}
+                  deleteAction={handleDelete}
+                />
+              )}
+            </div>
           </TabsContent>
         ))}
       </Tabs>
