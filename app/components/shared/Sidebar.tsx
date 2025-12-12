@@ -10,7 +10,6 @@ import {
   Folder,
 } from "lucide-react";
 import clsx from "clsx";
-import path from "path";
 import { NavLink } from "react-router";
 
 interface SidebarProps {

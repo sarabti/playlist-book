@@ -7,7 +7,7 @@ import {
   SheetDescription,
   SheetTitle,
   SheetTrigger,
-} from "components/ui/Sheet";
+} from "~/components/ui/Sheet";
 import Sidebar from "./Sidebar";
 import PageNav from "./PageNav";
 

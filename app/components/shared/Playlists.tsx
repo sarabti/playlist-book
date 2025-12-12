@@ -3,7 +3,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "components/ui/Card";
+} from "~/components/ui/Card";
 import { Copy, FileMusic, Play, Star, Trash2 } from "lucide-react";
 
 interface ListProps {

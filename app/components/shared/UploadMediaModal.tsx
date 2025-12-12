@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { saveFile } from "../../app/lib/db";
+import { saveFile } from "../../lib/db";
 import { Upload, FolderUp, AlertCircle } from "lucide-react";
 
 export default function DragDropUpload() {

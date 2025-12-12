@@ -1,6 +1,6 @@
-import Header from "components/shared/Header";
-import PageNav from "components/shared/PageNav";
-import Sidebar from "components/shared/Sidebar";
+import Header from "~/components/shared/Header";
+import PageNav from "~/components/shared/PageNav";
+import Sidebar from "~/components/shared/Sidebar";
 import { Outlet } from "react-router";
 
 export default function Layout() {

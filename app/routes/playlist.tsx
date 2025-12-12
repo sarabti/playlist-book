@@ -5,12 +5,12 @@ import {
   TabsTrigger,
   TabsContent,
   Tabs,
-} from "../../components/ui/Tabs";
+} from "../components/ui/Tabs";
 import { useEffect, useState } from "react";
 import { appName } from "../../constants";
 import type { Route } from "./+types/playlist";
-import { PlaylistList } from "components/shared/Playlists";
-import { Button } from "components/ui/Button";
+import { PlaylistList } from "~/components/shared/Playlists";
+import { Button } from "~/components/ui/Button";
 import { Upload } from "lucide-react";
 import {
   Dialog,
@@ -18,8 +18,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "components/ui/Dialog";
-import UploadMediaModal from "components/shared/UploadMediaModal";
+} from "~/components/ui/Dialog";
+import UploadMediaModal from "~/components/shared/UploadMediaModal";
 import { getAllFiles } from "~/lib/db";
 
 export function meta({}: Route.MetaArgs) {
@@ -40,7 +40,7 @@ export default function Playlist() {
 
   useEffect(() => {
     loadFiles();
-  }, []);
+  }, [reloadKey]);
 
   async function loadFiles() {
     const stored = await getAllFiles();
